@@ -122,7 +122,6 @@ getWorkshopsItems() {
         .catch(error => {  
             //this.error = error; 
           console.log(error); 
-            //this.accounts = undefined;  
           }); 
           
          
