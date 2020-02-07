@@ -59,7 +59,6 @@ export default class RecordList extends LightningElement {
   //chartRows;
   @track workshopsData;
   error;
-  varforgit;
 
   @wire(CurrentPageReference) pageRef;
 
