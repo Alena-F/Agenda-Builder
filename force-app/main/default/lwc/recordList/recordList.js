@@ -188,7 +188,7 @@ getWorkshopsItems() {
 
   handleChange(event) {
     this.filterValue = event.detail.value;
-    console.log(this.filterValue);
+    //console.log(this.filterValue);
     this.getWorkshopsItems();
   }
 
