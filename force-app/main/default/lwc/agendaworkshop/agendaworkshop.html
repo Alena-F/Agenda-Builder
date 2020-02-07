@@ -1,0 +1,28 @@
+<template>
+    <lightning-card title="Workshops" icon-name="utility:event">
+
+        <div class="slds-m-around_medium">
+          
+            <template if:true={data}>
+                <lightning-combobox
+                    name="category"
+                    label="Category filter"
+                    value={filterValue}
+                    placeholder={filterValue}
+                    options={options}
+                    onchange={handleChange} ></lightning-combobox>
+                <lightning-datatable
+                    key-field="Id"
+                    data={data}
+                    columns={columns}
+                    hide-checkbox-column="true" 
+                    onsave={handleSave}
+                    draft-values={draftValues}>
+                </lightning-datatable>
+            </template>
+            <template if:true={noRecordsFound}>
+                --No Workshops Found--
+            </template>
+        </div>
+    </lightning-card>
+</template>

@@ -1,0 +1,41 @@
+{
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "baseUrl": ".",
+        "paths": {
+            "c/agendachart": [
+                "agendachart/agendachart.js"
+            ],
+            "c/agendaform": [
+                "agendaform/agendaform.js"
+            ],
+            "c/agendaworkshop": [
+                "agendaworkshop/agendaworkshop.js"
+            ],
+            "c/helloworld": [
+                "helloworld/helloworld.js"
+            ],
+            "c/pagination": [
+                "pagination/pagination.js"
+            ],
+            "c/paginationParent": [
+                "paginationParent/paginationParent.js"
+            ],
+            "c/pubsub": [
+                "pubsub/pubsub.js"
+            ],
+            "c/recordList": [
+                "recordList/recordList.js"
+            ]
+        }
+    },
+    "include": [
+        "**/*",
+        "../../../../.sfdx/typings/lwc/**/*.d.ts"
+    ],
+    "typeAcquisition": {
+        "include": [
+            "jest"
+        ]
+    }
+}

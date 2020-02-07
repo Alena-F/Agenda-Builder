@@ -1,0 +1,5 @@
+<aura:component implements="lightning:actionOverride,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+    <!--c:helloworld /-->
+    <!--<h2 class="slds-text-heading-medium">ID: {!v.recordId}</h2>-->
+    <c:agendaform recordId="{!v.recordId}"></c:agendaform>
+</aura:component>	
