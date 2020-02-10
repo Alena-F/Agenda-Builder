@@ -9,7 +9,7 @@ import updateAgendaWorkshops from '@salesforce/apex/ManageRecordsController.upda
 import{CurrentPageReference} from 'lightning/navigation';
 import { fireEvent, registerListener, unregisterAllListeners } from 'c/pubsub';
 
-//const pagesize = 5; 
+
 const COLS = [
   { label: 'Number of Attendees', fieldName: 'Number_of_Attendees__c', type: 'number', editable: true, cellAttributes: { alignment: 'left' } },
   { label: 'Workshop Name', fieldName: 'WorkshopNameURL', type: 'url', typeAttributes: {label: { fieldName: 'Name' }, target: '_blank'}, cellAttributes: { alignment: 'left' } },
@@ -30,17 +30,9 @@ export default class RecordList extends LightningElement {
   @track error;  
   @api currentpage;  
   @api pagesize; 
-  //pagesize = 5;  
   totalpages;  
   localCurrentPage = null;  
  
-  /*pageSizeOptions = [  
-    { label: '5', value: 5 },  
-    { label: '10', value: 10 },  
-    { label: '25', value: 25 },  
-    { label: '50', value: 50 },  
-    { label: 'All', value: '' },  
-  ];  */
 ////////////
   @api agendaId;
   @api organizer;
@@ -56,21 +48,19 @@ export default class RecordList extends LightningElement {
   @track categories = [{ label: '--Any category--', value: '' }];
   @track options;
   @track chartData;
-  //chartRows;
   @track workshopsData;
   error;
 
   @wire(CurrentPageReference) pageRef;
 
 getWorkshopsItems() {
-  console.log('page: ' + this.currentpage);
+  //console.log('page: ' + this.currentpage);
   this.localCurrentPage = this.currentpage;  
   getWorkshopsCount({
     recordid : this.agendaId,
     filterValue : this.filterValue
   })  
   .then(recordsCount => {  
-    //this.totalrecords = recordsCount;  
     if (recordsCount !== 0 && !isNaN(recordsCount)) { 
       this.noRecordsFound = false; 
       this.totalpages = Math.ceil(recordsCount / this.pagesize);  
@@ -82,7 +72,7 @@ getWorkshopsItems() {
         pageSize: this.pagesize
       })  
       .then(result => {  
-        console.log(result);
+        //console.log(result);
         if(result.length >0 ) {
           this.noRecordsFound = false;
         } else {
@@ -99,8 +89,8 @@ getWorkshopsItems() {
             element.WorkshopNameURL = '/lightning/r/Workshop__c/' + element.Id + '/view';
             this.allRows.push(element);
           });
-          console.log(this.rows);
-          console.log(this.allRows);
+          //console.log(this.rows);
+          //console.log(this.allRows);
           this.data = this.rows;
           
           countAttendees({
@@ -111,7 +101,7 @@ getWorkshopsItems() {
           })
           .then(result1 => {
             this.chartData = result1;
-            console.log(JSON.stringify(this.chartData));
+            //console.log(JSON.stringify(this.chartData));
             fireEvent(this.pageRef, 'chartDataUpdate', JSON.stringify(this.chartData));
           })
           .catch(error => {
@@ -125,28 +115,23 @@ getWorkshopsItems() {
         }); 
           
          
-    } else {  
-      this.noRecordsFound = true;
-      this.rows = []; 
-      this.data = this.rows;
-      this.chartData = [];
-      console.log(JSON.stringify(this.chartData));
-      fireEvent(this.pageRef, 'chartDataUpdate', JSON.stringify(this.chartData)); 
-      this.totalpages = 1;  
-      //this.totalrecords = 0;  
-    } 
-    ///// 
+      } else {  
+        this.noRecordsFound = true;
+        this.rows = []; 
+        this.data = this.rows;
+        this.chartData = [];
+        //console.log(JSON.stringify(this.chartData));
+        fireEvent(this.pageRef, 'chartDataUpdate', JSON.stringify(this.chartData)); 
+        this.totalpages = 1;  
+      } 
       const event = new CustomEvent('recordsload', {  
         detail: recordsCount  
       });  
-      this.dispatchEvent(event); 
-      ////// 
-      //fireEvent(this.pageRef, 'recordsloadUpdate', recordsCount);
-    })  
+    this.dispatchEvent(event); 
+   })  
     .catch(error => {  
       //this.error = error;  
       console.log(error);
-      //this.totalrecords = undefined;  
     });  
 
 }
@@ -161,8 +146,8 @@ getWorkshopsItems() {
       .then(result => {
           result.forEach(element => this.categories.push({value: element , label: element}));
           this.options=this.categories;
-          console.log(result);
-          console.log(this.categories);
+          //console.log(result);
+          //console.log(this.categories);
     })
       .catch(error => {
           //this.error = error;
@@ -193,14 +178,14 @@ getWorkshopsItems() {
 
   handleSave(event) {
     //event.stopPropagation();
-    console.log('data => ', JSON.stringify(event.detail.draftValues));
+    //console.log('data => ', JSON.stringify(event.detail.draftValues));
     this.workshopsData = event.detail.draftValues;
-    console.log(this.draftValues);
-    console.log(this.organizer);
+    //console.log(this.draftValues);
+    //console.log(this.organizer);
     //console.log(this.workshopsData[0].NumberOfAttendees);
 
     let blankAttendees = this.workshopsData.filter( workshop => workshop.Number_of_Attendees__c === "" );
-    console.log(blankAttendees);
+    //console.log(blankAttendees);
     
     if (blankAttendees.length !== 0) {
       this.disableFilter = true;
@@ -218,15 +203,15 @@ getWorkshopsItems() {
         workshop.Workshop__c = workshop.Id;
         workshop.Primary_Attendee__c = this.organizer;
         this.row = this.allRows.find(row => row.Id === workshop.Id);
-        console.log(this.row);
+        //console.log(this.row);
         if(this.row.Agenda_Workshops__r) {
           workshop.Id = this.row.Agenda_Workshops__r[0].Id;
         } else {
           delete workshop.Id;
         }
       })
-      console.log(this.workshopsData);
-      console.log('this.agendaId' + this.agendaId);
+      //console.log(this.workshopsData);
+      //console.log('this.agendaId' + this.agendaId);
       // eslint-disable-next-line @lwc/lwc/no-async-operation
       setTimeout(() => {
       updateAgendaWorkshops({
@@ -254,7 +239,7 @@ getWorkshopsItems() {
   }
 
   handleCancel() {
-    console.log('handleCancel')
+    //console.log('handleCancel')
     this.disableFilter = false;
   }
 

@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import { LightningElement, track, api, wire } from 'lwc';
-import getWorkshops from '@salesforce/apex/getRecord.getWorkshops';
-import getCategoryList from '@salesforce/apex/getRecord.getCategoryList';
-import countAttendees from '@salesforce/apex/getRecord.countAttendees';
+import getWorkshops from '@salesforce/apex/ManageRecordsController.getWorkshops';
+import getCategoryList from '@salesforce/apex/ManageRecordsController.getCategoryList';
+import countAttendees from '@salesforce/apex/ManageRecordsController.countAttendees';
 import{CurrentPageReference} from 'lightning/navigation';
 import { fireEvent } from 'c/pubsub';
 

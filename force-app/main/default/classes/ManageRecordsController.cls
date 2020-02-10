@@ -1,6 +1,12 @@
 public with sharing class ManageRecordsController {  
 
   @AuraEnabled
+  public static List<Agenda__c> getAgendaName(Id recordid){
+      List<Agenda__c> record = [SELECT Name, Organizer__c FROM Agenda__c WHERE Id = :recordid];
+      return record;
+  }
+  
+  @AuraEnabled
     public static List<String> getCategoryList(){
         List<String> categoryList = new List<String>();
         Schema.DescribeFieldResult fieldResult = Workshop__c.Category__c.getDescribe();

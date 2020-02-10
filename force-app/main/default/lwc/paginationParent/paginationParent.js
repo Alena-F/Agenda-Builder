@@ -2,7 +2,7 @@
 import { LightningElement,  api, wire } from 'lwc'; 
 import{CurrentPageReference} from 'lightning/navigation';
 import { registerListener, unregisterAllListeners } from 'c/pubsub'; 
-//const PAGE_SIZE = 5;  
+  
 export default class PaginationParent extends LightningElement {  
   @api agendaId;
   @api organizer;
@@ -10,13 +10,7 @@ export default class PaginationParent extends LightningElement {
   @api totalrecords;
   @api totalPages;  
   @api pagesize = 5;  
-  /*get pagesize() {  
-    return this._pagesize;  
-  }  
-  set pagesize(value) {  
-    this._pagesize = value;  
-  }  */
-
+ 
   @wire(CurrentPageReference) pageRef;
 
   connectedCallback() {

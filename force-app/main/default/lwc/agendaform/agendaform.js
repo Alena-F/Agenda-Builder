@@ -2,7 +2,7 @@
 import { LightningElement, api, track, wire } from 'lwc';
 import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import getRecords from '@salesforce/apex/getRecord.getRecords';
+import getAgendaName from '@salesforce/apex/ManageRecordsController.getAgendaName';
 import { fireEvent, registerListener, unregisterAllListeners } from 'c/pubsub';
 
 export default class AgendaForm extends NavigationMixin(LightningElement) {
@@ -28,7 +28,7 @@ export default class AgendaForm extends NavigationMixin(LightningElement) {
     connectedCallback(){
         registerListener('agendaCreateUpdate' ,this.handleSave, this);
         if (this.recordId) {
-            getRecords({
+            getAgendaName({
                 recordid : this.recordId
             })
             .then(result => {
