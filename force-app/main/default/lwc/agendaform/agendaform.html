@@ -1,23 +1,23 @@
 <template>
-        <div class="slds-m-around_medium">
-            <div class="slds-tabs_card">
-                <div class="slds-page-header">
-                    <div class="slds-page-header__row">
-                        <div class="slds-page-header__col-title">
-                            <div class="slds-media">
-                                <div class="slds-media__figure">
-                                    <span class="slds-icon_container slds-icon-standard-opportunity">
-                                        <lightning-icon class="icon" icon-name="utility:trending"></lightning-icon>
-                                    </span>
-                                </div>
-                                <div class="slds-media__body">
-                                    <div class="slds-page-header__name">
-                                        <div class="slds-page-header__name-title">
-                                            <h1>
-                                                <span>Agenda Builder</span>
-                                                <span class="slds-page-header__title slds-truncate">{name}</span>
-                                            </h1>
-                                        </div>
+    <div class="slds-m-around_medium">
+        <!--*******************HEADER******************-->
+        <div class="slds-tabs_card">
+            <div class="slds-page-header">
+                <div class="slds-page-header__row">
+                    <div class="slds-page-header__col-title">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <span class="slds-icon_container slds-icon-standard-opportunity">
+                                    <lightning-icon class="icon" icon-name="utility:trending"></lightning-icon>
+                                </span>
+                            </div>
+                            <div class="slds-media__body">
+                                <div class="slds-page-header__name">
+                                    <div class="slds-page-header__name-title">
+                                        <h1>
+                                            <span>Agenda Builder</span>
+                                            <span class="slds-page-header__title slds-truncate">{name}</span>
+                                        </h1>
                                     </div>
                                 </div>
                             </div>
@@ -25,20 +25,19 @@
                     </div>
                 </div>
             </div>
-
-            <lightning-card icon-name="utility:record_lookup" title="Details">
-                <div class="slds-m-around_medium">
-                    <lightning-record-edit-form
-                                            record-id={recordId}
-                                            object-api-name="Agenda__c"
-                                            onsuccess={handleSuccess}
-                                            onsubmit ={handleSubmit}
-                                            onerror={handleError}>
+        </div>
+        <!--*******************AGENDA FORM******************-->
+        <lightning-card icon-name="utility:record_lookup" title="Details">
+            <div class="slds-m-around_medium">
+                <lightning-record-edit-form
+                                        record-id={recordId}
+                                        object-api-name="Agenda__c"
+                                        onsuccess={handleSuccess}
+                                        onsubmit ={handleSubmit}
+                                        onerror={handleError}>
                     <div class="button-group">
-                        <lightning-button class="slds-m-top_small" variant="brand" type="submit" name="update" label="Save">
-                    </lightning-button>
-                        <lightning-button class="slds-m-top_small" name="cancel" label="Cancel" onclick={handleCancel}>
-                    </lightning-button>
+                        <lightning-button class="slds-m-top_small" variant="brand" type="submit" name="update" label="Save"></lightning-button>
+                        <lightning-button class="slds-m-top_small" name="cancel" label="Cancel" onclick={handleCancel}></lightning-button>
                     </div>
                     <div class="slds-grid">
                         <div class="slds-col slds-size_1-of-2">
@@ -49,22 +48,17 @@
                             <lightning-input-field field-name="Organizer__c"></lightning-input-field>
                         </div>
                     </div>
-                    </lightning-record-edit-form>
-                </div>
-            </lightning-card>
-
-            <c-agendachart item-id={recordId}></c-agendachart>
-            <!--
-            <lightning-card>
-                <c-agendaworkshop agenda-id={recordId} organizer={organizer}></c-agendaworkshop>
-              
-                <c-pagination onprevious={handlePrevious} onnext={handleNext} onfirst={handleFirst}  
-                onlast={handleLast} currentpage={page} totalrecords={totalrecords} pagesize={pagesize}>  
-                </c-pagination>
-           </lightning-card> 
-        --> 
-            <c-pagination-parent agenda-id={recordId} organizer={organizer}></c-pagination-parent>
-             
-
-        </div>
-    </template>
+                </lightning-record-edit-form>
+            </div>
+        </lightning-card>
+        <!--*******************CHART COMPONENT******************-->
+        <c-agendachart item-id={recordId}></c-agendachart>
+        <!--*******************WORKSHOPS AND PAGINATION COMPONENTS******************-->
+        <lightning-card>
+            <c-record-list currentpage={page} onrecordsload={handleRecordsLoad} pagesize={pagesize} agenda-id={recordId} organizer={organizer}></c-record-list>  
+            <div class="slds-m-around_medium">  
+                <c-pagination currentpage={page} totalrecords={totalrecords} totalpages={totalPages}></c-pagination>  
+            </div>  
+        </lightning-card> 
+    </div>
+</template>

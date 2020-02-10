@@ -11,6 +11,10 @@ export default class AgendaForm extends NavigationMixin(LightningElement) {
     @track organizer;
     @api updatedRecord;
     @track chartData;
+    @api page = 1;  
+    @api totalrecords;
+    @api totalPages;  
+    @api pagesize = 5;  
                
     @wire(CurrentPageReference) pageRef;
 
@@ -27,19 +31,19 @@ export default class AgendaForm extends NavigationMixin(LightningElement) {
    
     connectedCallback(){
         registerListener('agendaCreateUpdate' ,this.handleSave, this);
+        registerListener('previousUpdate' ,this.handlePrevious, this);
+        registerListener('nextUpdate' ,this.handleNext, this);
+        registerListener('firstUpdate' ,this.handleFirst, this);
+        registerListener('lastUpdate' ,this.handleLast, this);
         if (this.recordId) {
             getAgendaName({
                 recordid : this.recordId
             })
             .then(result => {
-                //this.error = undefined;
-                //console.log('result ' + result);
                 this.name = result[0].Name;
                 this.organizer = result[0].Organizer__c;
-                console.log(this.organizer);
             })
             .catch(error => {
-                //this.error = error;
                 console.log(error);
             });
         } else {
@@ -53,11 +57,6 @@ export default class AgendaForm extends NavigationMixin(LightningElement) {
                 
     handleSubmit(event) {
         console.log('onsubmit: '+ event.detail.fields);
-        //event.preventDefault();       // stop the form from submitting
-       // this.reloadForm=true;
-        //const fields = event.detail.fields;
-        //this.template.querySelector('lightning-record-edit-form').submit(fields);
- 
     }
 
     handleSave() {
@@ -74,9 +73,7 @@ export default class AgendaForm extends NavigationMixin(LightningElement) {
         this.navigateToRecord(event.detail.id);
 
         this.updatedRecord = event.detail.id;
-        console.log('onsuccess: ', this.updatedRecord);
         fireEvent(this.pageRef, 'agendaUpdate', this.updatedRecord); 
-        
     }
 
     handleError() {
@@ -91,4 +88,34 @@ export default class AgendaForm extends NavigationMixin(LightningElement) {
     handleCancel() {
         window.history.back();
     }
+
+    handlePrevious() {  
+        if (this.page > 1) {  
+          this.page = this.page - 1;  
+        }  
+    }
+
+    handleNext() {  
+        if (this.page < this.totalPages) {
+          this.page = this.page + 1;  
+        }
+    }
+
+    handleFirst() {  
+        this.page = 1;  
+    }
+
+    handleLast() {  
+        this.page = this.totalPages;  
+    }
+
+    handleRecordsLoad(event) {  
+        this.totalrecords = event.detail;  
+        this.totalPages = Math.ceil(this.totalrecords / this.pagesize);  
+        console.log(this.totalPages);
+    }
+
+    handlePageChange(event) {  
+        this.page = event.detail;  
+    }  
 }

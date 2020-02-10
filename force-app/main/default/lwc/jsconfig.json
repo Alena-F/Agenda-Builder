@@ -15,9 +15,6 @@
             "c/pagination": [
                 "pagination/pagination.js"
             ],
-            "c/paginationParent": [
-                "paginationParent/paginationParent.js"
-            ],
             "c/pubsub": [
                 "pubsub/pubsub.js"
             ],
