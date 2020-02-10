@@ -122,7 +122,7 @@ getWorkshopsItems() {
         .catch(error => {  
             //this.error = error; 
           console.log(error); 
-          }); 
+        }); 
           
          
     } else {  
