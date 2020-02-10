@@ -12,9 +12,6 @@
             "c/agendaworkshop": [
                 "agendaworkshop/agendaworkshop.js"
             ],
-            "c/helloworld": [
-                "helloworld/helloworld.js"
-            ],
             "c/pagination": [
                 "pagination/pagination.js"
             ],
