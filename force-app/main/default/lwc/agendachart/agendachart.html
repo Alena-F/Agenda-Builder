@@ -5,12 +5,13 @@
             <div if:true={showLoadingSpinner}>
                 <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
             </div>
+            
             <div if:true={isChartJsInitialized} class="slds-col--padded slds-size--1-of-1">
                 <canvas class="linechart" lwc:dom="manual" width="auto" height="50"></canvas>
             </div>
+            
             <div if:false={isChartJsInitialized} class="slds-col--padded slds-size--1-of-1">
                 <div class="chart-message">
-                    <!--<lightning-card   title="No Registered Workshops" icon-name="utility:info"></lightning-card>-->
                     <lightning-icon icon-name="utility:info"></lightning-icon>
                     <p>No Registered Workshops</p> 
                 </div>   
