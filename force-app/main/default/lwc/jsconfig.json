@@ -9,9 +9,6 @@
             "c/agendaform": [
                 "agendaform/agendaform.js"
             ],
-            "c/agendaworkshop": [
-                "agendaworkshop/agendaworkshop.js"
-            ],
             "c/pagination": [
                 "pagination/pagination.js"
             ],
