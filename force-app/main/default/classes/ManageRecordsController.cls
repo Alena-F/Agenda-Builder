@@ -17,26 +17,32 @@ public with sharing class ManageRecordsController {
      return categoryList;
   } 
 
-  @AuraEnabled  
-  public static Integer getWorkshopsCount(Id recordid, String filterValue) {  
+  @AuraEnabled
+  public static List<SObject> getAllWorkshops(Id recordid, String filterValue){
     Date today = date.today();
     List<Id> idWorkshopsList = new List<Id>();
     for (Agenda_Workshop__c aw : [SELECT Workshop__r.ID FROM Agenda_Workshop__c 
                                   WHERE Agenda__r.Id = :recordid and Workshop__r.Remaining_Spots__c = 0 and day_only(Workshop__r.Start_Date_Time__c) >= :today]) {
 			idWorkshopsList.add(aw.Workshop__r.ID);
 		}
-        
-    Integer countWorkshops;
+       
+    List<Workshop__c> workshops = new List<Workshop__c>();
     if(filterValue != '') {        
-      countWorkshops = [SELECT count()  FROM Workshop__c 
-                        WHERE (Remaining_Spots__c >0 and day_only(Start_Date_Time__c) >= :today and Category__c = :filterValue) or
-                        ( Remaining_Spots__c = 0 and ID IN :idWorkshopsList and Category__c = :filterValue)];
+      workshops = [SELECT Name, Start_Date_Time__c, Remaining_Spots__c,Category__c, 
+                  (SELECT Number_of_Attendees__c FROM Agenda_Workshops__r 
+                  WHERE Agenda__r.Id = :recordid) FROM Workshop__c 
+                  WHERE (Remaining_Spots__c >0 and day_only(Start_Date_Time__c) >= :today and Category__c = :filterValue) or
+                  ( Remaining_Spots__c = 0 and ID IN :idWorkshopsList and Category__c = :filterValue) 
+                  ORDER BY Start_Date_Time__c];
     } else {
-      countWorkshops = [SELECT count() FROM Workshop__c 
-                        WHERE (Remaining_Spots__c >0 and day_only(Start_Date_Time__c) >= :today) or ( Remaining_Spots__c = 0 and ID IN :idWorkshopsList)];  
+      workshops = [SELECT Name, Start_Date_Time__c, Remaining_Spots__c,Category__c, 
+                  (SELECT Number_of_Attendees__c FROM Agenda_Workshops__r 
+                  WHERE Agenda__r.Id = :recordid) FROM Workshop__c 
+                  WHERE (Remaining_Spots__c >0 and day_only(Start_Date_Time__c) >= :today) or ( Remaining_Spots__c = 0 and ID IN :idWorkshopsList) 
+                  ORDER BY Start_Date_Time__c];  
     }
-    return countWorkshops;
-  } 
+    return workshops;
+  }
 
   @AuraEnabled
   public static List<SObject> getWorkshops(Id recordid, String filterValue, Integer pagenumber, Integer numberOfRecords, Integer pageSize){
@@ -64,37 +70,10 @@ public with sharing class ManageRecordsController {
     }
     return workshops;
   }
-    
+  
+     
   @AuraEnabled
-  public static List<SObject> getAllWorkshops(Id recordid, String filterValue){
-    Date today = date.today();
-    List<Id> idWorkshopsList = new List<Id>();
-    for (Agenda_Workshop__c aw : [SELECT Workshop__r.ID FROM Agenda_Workshop__c 
-                                  WHERE Agenda__r.Id = :recordid and Workshop__r.Remaining_Spots__c = 0 and day_only(Workshop__r.Start_Date_Time__c) >= :today]) {
-			idWorkshopsList.add(aw.Workshop__r.ID);
-		}
-       
-    List<Workshop__c> workshops = new List<Workshop__c>();
-    if(filterValue != '') {        
-      workshops = [SELECT Name, Start_Date_Time__c, Remaining_Spots__c,Category__c, 
-                  (SELECT Number_of_Attendees__c FROM Agenda_Workshops__r 
-                  WHERE Agenda__r.Id = :recordid) FROM Workshop__c 
-                  WHERE (Remaining_Spots__c >0 and day_only(Start_Date_Time__c) >= :today and Category__c = :filterValue) or
-                  ( Remaining_Spots__c = 0 and ID IN :idWorkshopsList and Category__c = :filterValue) 
-                  ORDER BY Start_Date_Time__c];
-    } else {
-      workshops = [SELECT Name, Start_Date_Time__c, Remaining_Spots__c,Category__c, 
-                  (SELECT Number_of_Attendees__c FROM Agenda_Workshops__r 
-                  WHERE Agenda__r.Id = :recordid) FROM Workshop__c 
-                  WHERE (Remaining_Spots__c >0 and day_only(Start_Date_Time__c) >= :today) or ( Remaining_Spots__c = 0 and ID IN :idWorkshopsList) 
-                  ORDER BY Start_Date_Time__c];  
-    }
-    return workshops;
-  }
-    
-  @AuraEnabled
-  public static map<date,decimal> countAttendees (Id recordid, String filterValue)/*(List<Workshop__c> workshops, Id recordid)*/{
-    List<Workshop__c> workshops = getAllWorkshops(recordid, filterValue);
+  public static map<date,decimal> countAttendees (List<Workshop__c> workshops, Id recordid){
     map<date,decimal> dateAttendees =new map<date,decimal>();
     List<Id> idWorkshops = new List<Id>();
     for (Workshop__c w : workshops) {

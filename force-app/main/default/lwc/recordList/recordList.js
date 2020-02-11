@@ -1,14 +1,13 @@
 /* eslint-disable no-console */
 import { LightningElement, track, api, wire } from 'lwc'; 
-import { ShowToastEvent } from 'lightning/platformShowToastEvent'; 
-import getWorkshopsCount from '@salesforce/apex/ManageRecordsController.getWorkshopsCount';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import{CurrentPageReference} from 'lightning/navigation';
+import { fireEvent, registerListener, unregisterAllListeners } from 'c/pubsub'; 
+import getAllWorkshops from '@salesforce/apex/ManageRecordsController.getAllWorkshops';
 import getWorkshops from '@salesforce/apex/ManageRecordsController.getWorkshops';  
 import getCategoryList from '@salesforce/apex/ManageRecordsController.getCategoryList';
 import countAttendees from '@salesforce/apex/ManageRecordsController.countAttendees';
 import updateAgendaWorkshops from '@salesforce/apex/ManageRecordsController.updateAgendaWorkshops'
-import{CurrentPageReference} from 'lightning/navigation';
-import { fireEvent, registerListener, unregisterAllListeners } from 'c/pubsub';
-
 
 const COLS = [
   { label: 'Number of Attendees', fieldName: 'Number_of_Attendees__c', type: 'number', editable: true, cellAttributes: { alignment: 'left' } },
@@ -41,6 +40,8 @@ export default class RecordList extends LightningElement {
   @track options;
   @track chartData;
   @track workshopsData;
+  allWorkshops;
+  allWorkshopsCount;
   blankAttendees;
    ///////pagination variables
   @api currentpage;  
@@ -51,19 +52,21 @@ export default class RecordList extends LightningElement {
   @wire(CurrentPageReference) pageRef;
 
   getWorkshopsItems() {
-    getWorkshopsCount({
+    getAllWorkshops({
       recordid : this.agendaId,
       filterValue : this.filterValue
     })  
-    .then(recordsCount => {  
-      if (recordsCount !== 0 && !isNaN(recordsCount)) { 
+    .then(records => {
+      this.allWorkshops = records;
+      this.allWorkshopsCount = this.allWorkshops.length;  
+      if (this.allWorkshopsCount !== 0) {  
         this.noRecordsFound = false; 
-        this.totalpages = Math.ceil(recordsCount / this.pagesize);  
+        this.totalpages = Math.ceil(this.allWorkshopsCount / this.pagesize);  
         getWorkshops ({
           recordid : this.agendaId,
           filterValue : this.filterValue,
           pagenumber: this.currentpage, 
-          numberOfRecords: recordsCount, 
+          numberOfRecords: this.allWorkshopsCount, 
           pageSize: this.pagesize
         })  
         .then(result => {  
@@ -80,10 +83,8 @@ export default class RecordList extends LightningElement {
           this.data = this.rows;
           
           countAttendees({
-            recordid : this.agendaId,
-            filterValue : this.filterValue
-            /*workshops : this.rows,
-            recordid : this.agendaId */               
+            workshops : this.allWorkshops,
+            recordid : this.agendaId                
           })
           .then(result1 => {
             this.chartData = result1;
@@ -105,7 +106,7 @@ export default class RecordList extends LightningElement {
         this.totalpages = 1;  
       } 
       const event = new CustomEvent('recordsload', {  
-        detail: recordsCount  
+        detail: this.allWorkshopsCount  
       });  
       this.dispatchEvent(event); 
     })  
