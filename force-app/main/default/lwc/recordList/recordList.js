@@ -120,7 +120,6 @@ export default class RecordList extends LightningElement {
     registerListener('nextUpdate' ,this.handlePagination, this);
     registerListener('firstUpdate' ,this.handlePagination, this);
     registerListener('lastUpdate' ,this.handlePagination, this);
-    registerListener('agendaUpdate' ,this.handleAgendaUpdate, this);
     getCategoryList()
       .then(result => {
         result.forEach(element => this.categories.push({value: element , label: element}));
@@ -139,12 +138,7 @@ export default class RecordList extends LightningElement {
   handlePagination() {
     this.getWorkshopsItems();
   }
-
-  handleAgendaUpdate(agendaId) {
-    this.agendaId = agendaId;
-    this.template.querySelector('lightning-datatable').save();
-  }
-
+  
   handleChange(event) {
     this.filterValue = event.detail.value;
     this.getWorkshopsItems();
@@ -165,18 +159,19 @@ export default class RecordList extends LightningElement {
       console.log(this.error);
     } else {
       fireEvent(this.pageRef, 'agendaCreateUpdate'); 
-      this.workshopsData.forEach( workshop => {
-        workshop.Workshop__c = workshop.Id;
-        workshop.Primary_Attendee__c = this.organizer;
-        this.row = this.allRows.find(row => row.Id === workshop.Id);
-        if(this.row.Agenda_Workshops__r) {
-          workshop.Id = this.row.Agenda_Workshops__r[0].Id;
-        } else {
-          delete workshop.Id;
-        }
-      })
+      
       // eslint-disable-next-line @lwc/lwc/no-async-operation
       setTimeout(() => {
+        this.workshopsData.forEach( workshop => {
+          workshop.Workshop__c = workshop.Id;
+          workshop.Primary_Attendee__c = this.organizer;
+          this.row = this.allRows.find(row => row.Id === workshop.Id);
+          if(this.row.Agenda_Workshops__r) {
+            workshop.Id = this.row.Agenda_Workshops__r[0].Id;
+          } else {
+            delete workshop.Id;
+          }
+        })
         updateAgendaWorkshops({
           agendaId : this.agendaId,
           agendaWorkshops : this.workshopsData

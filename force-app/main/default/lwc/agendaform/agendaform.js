@@ -3,13 +3,12 @@ import { LightningElement, api, track, wire } from 'lwc';
 import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getAgendaName from '@salesforce/apex/ManageRecordsController.getAgendaName';
-import { fireEvent, registerListener, unregisterAllListeners } from 'c/pubsub';
+import {registerListener, unregisterAllListeners } from 'c/pubsub';
 
 export default class AgendaForm extends NavigationMixin(LightningElement) {
     @api recordId;
     @track name;
     @track organizer;
-    @api updatedRecord;
     @track chartData;
     @api page = 1;  
     @api totalrecords;
@@ -71,9 +70,17 @@ export default class AgendaForm extends NavigationMixin(LightningElement) {
         });
         this.dispatchEvent(evt);
         this.navigateToRecord(event.detail.id);
-
-        this.updatedRecord = event.detail.id;
-        fireEvent(this.pageRef, 'agendaUpdate', this.updatedRecord); 
+        this.recordId = event.detail.id;
+        getAgendaName({
+            recordid : this.recordId
+        })
+        .then(result => {
+            this.organizer = result[0].Organizer__c;
+        })
+        .catch(error => {
+            console.log(error);
+        });
+        
     }
 
     handleError() {
