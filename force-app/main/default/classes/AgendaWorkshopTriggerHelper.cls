@@ -38,4 +38,35 @@ public class AgendaWorkshopTriggerHelper {
             Database.update(workshopsToUpdate);
         }
     }
+    
+    public static void updateRelatedContacts() {
+		List<Contact> contactsToUpdate = new List<Contact>();
+        
+        List<AggregateResult> AggregateResultList = [SELECT Primary_Attendee__c, Workshop__r.Category__c Cat, COUNT(Workshop__c) Num 
+                                                     FROM Agenda_Workshop__c GROUP BY Primary_Attendee__c, Workshop__r.Category__c];
+        if(AggregateResultList != null && AggregateResultList.size() > 0){ 
+    		                
+            for (Integer i = 1; i < AggregateResultList.size(); i++) {
+                if ((Id)AggregateResultList[i].get('Primary_Attendee__c') == (Id)AggregateResultList[i-1].get('Primary_Attendee__c') && (Integer)AggregateResultList[i].get('Num')>=(Integer)AggregateResultList[i-1].get('Num')  ) {
+                    AggregateResultList.remove(i-1);
+                    i--;
+                } else if ((Id)AggregateResultList[i].get('Primary_Attendee__c') == (Id)AggregateResultList[i-1].get('Primary_Attendee__c') && (Integer)AggregateResultList[i].get('Num')<(Integer)AggregateResultList[i-1].get('Num') ) {
+                    AggregateResultList.remove(i);
+                    i--;
+                }
+			}
+            
+            for(AggregateResult agg : AggregateResultList){
+                Contact c = new contact();
+                c.ID = (Id)agg.get('Primary_Attendee__c');
+                c.Favorite_Workshop_Category__c = (String)agg.get('Cat');
+                contactsToUpdate.add(c);
+            }  
+      		 
+      	}
+        
+        if(contactsToUpdate != null && !contactsToUpdate.isEmpty()) {
+            Database.update(contactsToUpdate);
+        }
+    }
 }

@@ -84,7 +84,7 @@ public with sharing class ManageRecordsController {
                                                 FROM Agenda_Workshop__c WHERE Workshop__r.ID IN :idWorkshops AND Agenda__r.Id = :recordid
                                                 GROUP BY day_only(Workshop__r.Start_Date_Time__c) ORDER by day_only(Workshop__r.Start_Date_Time__c)];
 		
-		if(AggregateResultList != null && AggregateResultList.size() > 0){ 
+	if(AggregateResultList != null && AggregateResultList.size() > 0){ 
     	for(AggregateResult agg : AggregateResultList){ 
         dateAttendees.put((date)agg.get('StartDate'), (decimal)agg.get('Attendees')); 
       } 
